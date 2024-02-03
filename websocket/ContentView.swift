@@ -12,6 +12,7 @@ import Foundation
 struct Cursor: Decodable, Identifiable {
     let id: String
     var y: Double
+    var isPressed: Bool
 }
 
 enum ServerMessage: Decodable {
@@ -30,7 +31,7 @@ class WebSocketManager: ObservableObject {
     @Published var cursors: [Cursor] = []
     
     func connectToWebSocket() {
-        let url = URL(string: "ws://172.28.37.92:8000/ws")!
+        let url = URL(string: "ws://192.168.0.137:8000/ws")!
         let request = URLRequest(url: url)
         
         webSocketTask = URLSession.shared.webSocketTask(with: request)
@@ -52,7 +53,7 @@ class WebSocketManager: ObservableObject {
                     print("Received message: \(receivedString ?? "")")
                 case .string(let text):
                     // Handle received text
-                    print("Received messagasdasde: \(text)")
+                    //                    print("Received messagasdasde: \(text)")
                     
                     let decoder = JSONDecoder()
                     do{
@@ -63,21 +64,20 @@ class WebSocketManager: ObservableObject {
                         case .InitialState(let id, let users):
                             self.cursors = users
                             self.id = id;
-                            print("z")
                         case .ClientConnect(let id):
-                            print("a")
-                            self.cursors.append(Cursor(id: id, y: 0.5))
+                            self.cursors.append(Cursor(id: id, y: 0.5, isPressed: false))
                             
                         case .ClientDisconnect(id: let id):
-                            print("b")
                             self.cursors.removeAll(where: {$0.id == id})
                             
                         case .CursorPress(id: let id, y: let y):
-                            print("c")
-                            
+                            if var index = self.cursors.firstIndex(where: {$0.id == id}) {
+                                self.cursors[index].isPressed = true
+                            }
                         case .CursorRelease(id: let id, y: let y):
-                            print("d")
-                            
+                            if var index = self.cursors.firstIndex(where: {$0.id == id}) {
+                                self.cursors[index].isPressed = false
+                            }
                         case .CursorMove(id: let id, y: let y):
                             if var index = self.cursors.firstIndex(where: {$0.id == id}) {
                                 self.cursors[index].y = y
@@ -126,25 +126,36 @@ struct ContentView: View {
         updatedText = "Hello, WebSocket!123"
     }
     
+    //    var drag: some Gesture {
+    //        DragGesture()
+    //            .onChanged { x in print(x) }
+    //            .onEnded { x in print(x)}
+    //    }
+    
+    @FocusState var focused1
+    
     
     var body: some View {
-        GeometryReader { geo in
-            ForEach(webSocketManager.cursors) { cursor in
-                Text(String(cursor.id) + ": " + String(cursor.y)).offset(x:100, y: cursor.y * geo.size.height)
+        VStack {
+            GeometryReader { geo in
+                ForEach(webSocketManager.cursors) { cursor in
+                    Text(String(cursor.id) + ": " + String(cursor.y) + "- " + String(cursor.isPressed)).offset(x:100, y: cursor.y * geo.size.height)
+                }
             }
         }
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text(updatedText).task(makeConnection)
-            Text(webSocketManager.id)
-            
+        .focusable(true)
+        .focused($focused1)
+        .onTapGesture {
+            print("clicked 1")
         }
-        .padding()
-        .onAppear {
-            
+        .onKeyPress(.upArrow) {
+            print("up")
+            return .handled
         }
+        .background(.red)
+        .task(makeConnection)
+        .frame( maxWidth: .infinity, maxHeight: .infinity)
+        
     }
 }
 
