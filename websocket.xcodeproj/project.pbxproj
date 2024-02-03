@@ -12,6 +12,9 @@
 		979697392B6D7636008B912D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 979697382B6D7636008B912D /* Assets.xcassets */; };
 		9796973D2B6D7636008B912D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9796973C2B6D7636008B912D /* Preview Assets.xcassets */; };
 		979697452B6D76A3008B912D /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 979697442B6D76A3008B912D /* Starscream */; };
+		F3D8A16E2B6E655800B8ADCA /* piano1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F3D8A16D2B6E655800B8ADCA /* piano1.wav */; };
+		F3D8A1702B6E655E00B8ADCA /* piano2.wav in Resources */ = {isa = PBXBuildFile; fileRef = F3D8A16F2B6E655E00B8ADCA /* piano2.wav */; };
+		F3D8A1722B6E656600B8ADCA /* piano3.wav in Resources */ = {isa = PBXBuildFile; fileRef = F3D8A1712B6E656600B8ADCA /* piano3.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		9796973A2B6D7636008B912D /* websocket.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = websocket.entitlements; sourceTree = "<group>"; };
 		9796973C2B6D7636008B912D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		979697462B6D783B008B912D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F3D8A16D2B6E655800B8ADCA /* piano1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = piano1.wav; path = ../../../../Downloads/piano1.wav; sourceTree = "<group>"; };
+		F3D8A16F2B6E655E00B8ADCA /* piano2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = piano2.wav; path = ../../../../Downloads/piano2.wav; sourceTree = "<group>"; };
+		F3D8A1712B6E656600B8ADCA /* piano3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = piano3.wav; path = ../../../../Downloads/piano3.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +61,9 @@
 		979697332B6D7635008B912D /* websocket */ = {
 			isa = PBXGroup;
 			children = (
+				F3D8A16D2B6E655800B8ADCA /* piano1.wav */,
+				F3D8A16F2B6E655E00B8ADCA /* piano2.wav */,
+				F3D8A1712B6E656600B8ADCA /* piano3.wav */,
 				979697462B6D783B008B912D /* Info.plist */,
 				979697342B6D7635008B912D /* websocketApp.swift */,
 				979697362B6D7635008B912D /* ContentView.swift */,
@@ -137,8 +146,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3D8A1722B6E656600B8ADCA /* piano3.wav in Resources */,
 				9796973D2B6D7636008B912D /* Preview Assets.xcassets in Resources */,
+				F3D8A16E2B6E655800B8ADCA /* piano1.wav in Resources */,
 				979697392B6D7636008B912D /* Assets.xcassets in Resources */,
+				F3D8A1702B6E655E00B8ADCA /* piano2.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,7 +293,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"websocket/Preview Content\"";
-				DEVELOPMENT_TEAM = M3P7Z86ULW;
+				DEVELOPMENT_TEAM = 3CHKVLYUJ9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = websocket/Info.plist;
@@ -301,7 +313,8 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = websocketdodo;
+				PRODUCT_BUNDLE_IDENTIFIER = walentin.tvos;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = walentin.websocketdodo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;

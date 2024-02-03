@@ -9,6 +9,8 @@ import SwiftUI
 
 import Foundation
 
+import AVKit
+
 struct Cursor: Decodable, Identifiable {
     let id: String
     var y: Double
@@ -39,6 +41,22 @@ class WebSocketManager: ObservableObject {
         webSocketTask.resume()
         
         receiveMessages()
+    }
+    
+    func playSoundBasedOnCursorY(cursorY: CGFloat) {
+        var audioPlayer: AVAudioPlayer!
+        let soundName: String
+        switch cursorY {
+        case 0..<0.3:
+            soundName = "piano1"
+        case 0.3..<0.6:
+            soundName = "piano2"
+        default:
+            soundName = "piano3"
+        }
+
+        let sound = Bundle.main.path(forResource: soundName, ofType: "wav")
+        audioPlayer.play()
     }
     
     func receiveMessages() {
@@ -74,6 +92,8 @@ class WebSocketManager: ObservableObject {
                             if var index = self.cursors.firstIndex(where: {$0.id == id}) {
                                 self.cursors[index].isPressed = true
                             }
+                            
+                            self.playSoundBasedOnCursorY(cursorY: y)
                         case .CursorRelease(id: let id, y: let y):
                             if var index = self.cursors.firstIndex(where: {$0.id == id}) {
                                 self.cursors[index].isPressed = false
@@ -158,6 +178,7 @@ struct ContentView: View {
         
     }
 }
+
 
 #Preview {
     ContentView()
