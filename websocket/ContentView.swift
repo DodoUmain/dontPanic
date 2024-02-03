@@ -26,10 +26,11 @@ enum ServerMessage: Decodable {
 class WebSocketManager: ObservableObject {
     var webSocketTask: URLSessionWebSocketTask!
     
+    @Published var id: String = "";
     @Published var cursors: [Cursor] = []
     
     func connectToWebSocket() {
-        let url = URL(string: "ws://172.26.2.83:8000/ws")!
+        let url = URL(string: "ws://172.28.37.92:8000/ws")!
         let request = URLRequest(url: url)
         
         webSocketTask = URLSession.shared.webSocketTask(with: request)
@@ -61,6 +62,7 @@ class WebSocketManager: ObservableObject {
                         switch serverMessage {
                         case .InitialState(let id, let users):
                             self.cursors = users
+                            self.id = id;
                             print("z")
                         case .ClientConnect(let id):
                             print("a")
@@ -114,8 +116,6 @@ class WebSocketManager: ObservableObject {
 // To disconnect
 // webSocketManager.disconnect()
 
-
-
 struct ContentView: View {
     @State var updatedText = "Connecting!!!!"
     @StateObject var webSocketManager = WebSocketManager()
@@ -129,7 +129,6 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader { geo in
-            
             ForEach(webSocketManager.cursors) { cursor in
                 Text(String(cursor.id) + ": " + String(cursor.y)).offset(x:100, y: cursor.y * geo.size.height)
             }
@@ -138,19 +137,14 @@ struct ContentView: View {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text(updatedText).task(delayText)
-
+            Text(updatedText).task(makeConnection)
+            Text(webSocketManager.id)
             
         }
         .padding()
         .onAppear {
             
         }
-    }
-    
-    func delayText() async {
-        try? await Task.sleep(nanoseconds: 3_000_000_000)
-        makeConnection()
     }
 }
 
