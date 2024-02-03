@@ -9,11 +9,27 @@ import SwiftUI
 
 import Foundation
 
-class WebSocketManager {
+struct Cursor: Decodable, Identifiable {
+    let id: String
+    var y: Float
+}
+
+enum ServerMessage: Decodable {
+    case InitialState(id: String, users: [Cursor])
+    case ClientConnect(id: String)
+    case ClientDisconnect(id: String)
+    case CursorPress(id: String, y:Float)
+    case CursorRelease(id: String, y:Float)
+    case CursorMove(id: String, y:Float)
+}
+
+class WebSocketManager: ObservableObject {
     var webSocketTask: URLSessionWebSocketTask!
     
+    @Published var cursors: [Cursor] = []
+    
     func connectToWebSocket() {
-        let url = URL(string: "ws://192.168.142.103:8000/ws")!
+        let url = URL(string: "ws://172.26.2.83:8000/ws")!
         let request = URLRequest(url: url)
         
         webSocketTask = URLSession.shared.webSocketTask(with: request)
@@ -31,10 +47,45 @@ class WebSocketManager {
                 case .data(let data):
                     // Handle received data
                     let receivedString = String(data: data, encoding: .utf8)
+                    
                     print("Received message: \(receivedString ?? "")")
                 case .string(let text):
                     // Handle received text
-                    print("Received message: \(text)")
+                    print("Received messagasdasde: \(text)")
+                    
+                    let decoder = JSONDecoder()
+                    do{
+                        // let somedata = Data(json.utf8)
+                        let serverMessage = try decoder.decode(ServerMessage.self, from: text.data(using:.utf8)!)
+                        
+                        switch serverMessage {
+                        case .InitialState(let id, let users):
+                            self.cursors = users
+                            print("z")
+                        case .ClientConnect(let id):
+                            print("a")
+                            self.cursors.append(Cursor(id: id, y: 0.5))
+                            
+                        case .ClientDisconnect(id: let id):
+                            print("b")
+                            self.cursors.removeAll(where: {$0.id == id})
+                            
+                        case .CursorPress(id: let id, y: let y):
+                            print("c")
+                            
+                        case .CursorRelease(id: let id, y: let y):
+                            print("d")
+                            
+                        case .CursorMove(id: let id, y: let y):
+                            if var index = self.cursors.firstIndex(where: {$0.id == id}) {
+                                self.cursors[index].y = y
+                            }
+                            
+                        }
+                        
+                    }catch let jsonErr {
+                        print(jsonErr)
+                    }
                 }
                 
                 // Continue to receive more messages
@@ -64,25 +115,33 @@ class WebSocketManager {
 // webSocketManager.disconnect()
 
 
+
 struct ContentView: View {
     @State var updatedText = "Connecting!!!!"
+    @StateObject var webSocketManager = WebSocketManager()
+    
     func makeConnection() {
         // Usage
-        let webSocketManager = WebSocketManager()
         webSocketManager.connectToWebSocket()
         webSocketManager.sendMessage(message: "Hello, WebSocket!123")
         updatedText = "Hello, WebSocket!123"
     }
+    
+    
     var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text(updatedText).task(delayText)
+            ForEach(webSocketManager.cursors) { cursor in
+                Text(String(cursor.id) + ": " + String(cursor.y))
+            }
+            
         }
         .padding()
         .onAppear {
-           
+            
         }
     }
     
