@@ -11,16 +11,16 @@ import Foundation
 
 struct Cursor: Decodable, Identifiable {
     let id: String
-    var y: Float
+    var y: Double
 }
 
 enum ServerMessage: Decodable {
     case InitialState(id: String, users: [Cursor])
     case ClientConnect(id: String)
     case ClientDisconnect(id: String)
-    case CursorPress(id: String, y:Float)
-    case CursorRelease(id: String, y:Float)
-    case CursorMove(id: String, y:Float)
+    case CursorPress(id: String, y:Double)
+    case CursorRelease(id: String, y:Double)
+    case CursorMove(id: String, y:Double)
 }
 
 class WebSocketManager: ObservableObject {
@@ -123,20 +123,23 @@ struct ContentView: View {
     func makeConnection() {
         // Usage
         webSocketManager.connectToWebSocket()
-        webSocketManager.sendMessage(message: "Hello, WebSocket!123")
         updatedText = "Hello, WebSocket!123"
     }
     
     
     var body: some View {
+        GeometryReader { geo in
+            
+            ForEach(webSocketManager.cursors) { cursor in
+                Text(String(cursor.id) + ": " + String(cursor.y)).offset(x:100, y: cursor.y * geo.size.height)
+            }
+        }
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text(updatedText).task(delayText)
-            ForEach(webSocketManager.cursors) { cursor in
-                Text(String(cursor.id) + ": " + String(cursor.y))
-            }
+
             
         }
         .padding()
